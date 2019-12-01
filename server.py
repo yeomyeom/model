@@ -36,18 +36,20 @@ def web_parse(url):     # Function of Open HTML.
 def parse(url):  # Second Parsing of REAL URL
       pics, stickers, texts, text = [],[],[],[]  # arrays of pic, sticker, text.
       html = web_parse(url)
-      try:
-            #pics += re.findall('<img.*?src="(.*?)".*?data-width="(.*?)" data-height="(.*?)".*?>', secondhtml) #parse pics number
-            pics += re.findall('<img.*?src="(.*?)".*?>', html) #parse pics number
-            #stickers += re.findall('<img.*? src="(.*?)".*?class="se-sticker-image" />',secondhtml)  #parse sticker number
-            stickers += re.findall('<img.*? src="(.*?)".*?class="se-sticker-image" />',html)  #parse sticker number
-            text += re.findall('<span.*?>(.*?)</span>',html) #parse text
-          
-            for parse in text:
-                  texts += re.findall("[가-힝0-9:.# ]",parse)
-            return texts
-      except:
-            return None
+      #pics += re.findall('<img.*?src="(.*?)".*?data-width="(.*?)" data-height="(.*?)".*?>', secondhtml) #parse pics number
+      pics += re.findall('<img.*?src="(.*?)".*?>', html) #parse pics number
+      #stickers += re.findall('<img.*? src="(.*?)".*?class="se-sticker-image" />',secondhtml)  #parse sticker number
+      stickers += re.findall('<img.*? src="(.*?)".*?class="se-sticker-image" />',html)  #parse sticker number
+      text += re.findall('<span.*?>(.*?)</span>',html) #parse text
+      f = open("check.txt","w")
+      for parse in text:
+            texts += re.findall("[가-힝# ]",parse)
+
+      f.write("".join(texts))
+      f.close()
+      text = "".join(texts)
+      texts = text.split(" ")
+      return texts
 
 #===============================================================================
 @application.route("/<url>")
@@ -57,7 +59,7 @@ def template_test(url):
       texts = []
       texts = parse(url)
       #result = " ".join(texts)
-      model = "IDK"
+      model = mlmodel(texts)
       #파싱된 파일들을 가지고 점수 출력
       emotion = -0.75
       title = 0.5
@@ -86,4 +88,3 @@ def error():
 
 if __name__=="__main__":
       application.run(host="0.0.0.0")
-
